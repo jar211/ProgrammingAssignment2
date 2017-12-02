@@ -40,31 +40,38 @@ cacheSolve <- function(x, ...) {
     # attempt to getinverse().
     inv <- x$getinverse()
     # if getinverse() is not null, then use the cache
-    if(!is.null(x$getinverse()))
+    if(!is.null(inv))
     {
         print("Using cached inverse...")
+        return(inv)
     }
-    else
-    {
-        print("Calculating inverse (no cache)...")
-        # calculate inverse and set cache.
-        data <- x$get()
-        x$setinverse(solve(data))
-    }
-    # return the inverse from what is now in the cached inverse
-    x$getinverse()
+
+    print("Calculating inverse (no cache)...")
+    # calculate inverse and set cache.
+    data <- x$get()
+    inv <- x$setinverse(solve(data))
+    return(inv)
     
 }
 
 # for testing the caching mechanism.
 testCache <- function()
 {
+    # test uncached
     M <- makeCacheMatrix(diag(c(1,2,3)))
     print("testing uncached")
+    print("matrix set")
+    print(M$get())
     print(cacheSolve(M))
+    
+    # test cached
     print("testing cached")
     print(cacheSolve(M))
+    
+    # test cache invalidation by changing matrix
     print("test matrix reset")
     M <- makeCacheMatrix(diag(c(4,5,6)))
+    print("matrix set")
+    print(M$get())
     print(cacheSolve(M))
 }
